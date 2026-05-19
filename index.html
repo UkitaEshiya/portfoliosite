@@ -2946,28 +2946,28 @@ select {
     }, 50);
 
     let phaseTwoStarted = false;
-  let finishLoadingTimer = null;
-
-  function showPhaseTwo() {
-    if (phaseTwoStarted) return;
-    phaseTwoStarted = true;
-    loadingTitle.innerHTML = 'LOAD<br>COMPLETE';   // ← 文字切换
-    loadingScreen.classList.add('flower-ready');
-    setTimeout(() => {
-      loadingScreen.classList.add('flower-visible');
-      clickPrompt.setAttribute('aria-hidden', 'false');
+    let finishLoadingTimer = null;
+  
+    function showPhaseTwo() {
+      if (phaseTwoStarted) return;
+      phaseTwoStarted = true;
+      loadingTitle.innerHTML = 'LOAD<br>COMPLETE';   // ← 文字切换
+      loadingScreen.classList.add('flower-ready');
       setTimeout(() => {
-        canEnter = true;
-        loadingScreen.classList.add('ready');
-      }, 900);
-    }, 300);
-  }
-
-function finishLoading() {
-  if (phaseTwoStarted) return;
-  clearTimeout(finishLoadingTimer);
-  finishLoadingTimer = setTimeout(showPhaseTwo, 3000);  // ← 3秒自动
-}
+        loadingScreen.classList.add('flower-visible');
+        clickPrompt.setAttribute('aria-hidden', 'false');
+        setTimeout(() => {
+          canEnter = true;
+          loadingScreen.classList.add('ready');
+        }, 900);
+      }, 300);
+    }
+  
+    function finishLoading() {
+      if (phaseTwoStarted) return;
+      clearTimeout(finishLoadingTimer);
+      finishLoadingTimer = setTimeout(showPhaseTwo, 3000);  // ← 3秒自动
+    }
 
     controls.forEach((control) => {
       control.addEventListener('click', () => {
