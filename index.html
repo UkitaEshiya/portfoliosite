@@ -2724,7 +2724,7 @@ select {
                 <span class="corner-brackets" aria-hidden="true"></span>
                 <div>
                   <div class="card-index">// WORK.02</div>
-                  <h2>Portfolio</h2>
+                  <h2>Works</h2>
                 </div>
                 <p>Selected artwork archive / Additional file</p>
               </button>
@@ -2758,7 +2758,7 @@ select {
                 <span class="bg-number" aria-hidden="true">01</span>
                 <h2 class="section-title">Galahad Light Induestries</h2>
               </div>
-              <p>Introduce the artist, current practice, recurring themes, exhibitions, commissions, or any statement you want visitors to see first.</p>
+              <p>galahad.light.industries.sys / independent operations</p>
             </div>
 
             <div class="bio-panel corner-frame">
@@ -2889,6 +2889,7 @@ select {
     const controls = Array.from(document.querySelectorAll('[data-target]'));
     const loadingScreen = document.getElementById('loading-screen');
     const progressBar = document.getElementById('progress-bar');
+    const loadingTitle = document.getElementById('loading-title');
     const clickPrompt = document.getElementById('click-prompt');
     const lightbox = document.getElementById('lightbox');
     const lightboxImage = document.getElementById('lightbox-image');
@@ -2944,19 +2945,29 @@ select {
       progressBar.style.width = progress + '%';
     }, 50);
 
-    function finishLoading() {
+    let phaseTwoStarted = false;
+  let finishLoadingTimer = null;
+
+  function showPhaseTwo() {
+    if (phaseTwoStarted) return;
+    phaseTwoStarted = true;
+    loadingTitle.innerHTML = 'LOAD<br>COMPLETE';   // ← 文字切换
+    loadingScreen.classList.add('flower-ready');
+    setTimeout(() => {
+      loadingScreen.classList.add('flower-visible');
+      clickPrompt.setAttribute('aria-hidden', 'false');
       setTimeout(() => {
-        loadingScreen.classList.add('flower-ready');
-        setTimeout(() => {
-          loadingScreen.classList.add('flower-visible');
-          clickPrompt.setAttribute('aria-hidden', 'false');
-          setTimeout(() => {
-            canEnter = true;
-            loadingScreen.classList.add('ready');
-          }, 900);
-        }, 300);
-      }, 3000);
-    }
+        canEnter = true;
+        loadingScreen.classList.add('ready');
+      }, 900);
+    }, 300);
+  }
+
+function finishLoading() {
+  if (phaseTwoStarted) return;
+  clearTimeout(finishLoadingTimer);
+  finishLoadingTimer = setTimeout(showPhaseTwo, 3000);  // ← 3秒自动
+}
 
     controls.forEach((control) => {
       control.addEventListener('click', () => {
@@ -3014,7 +3025,14 @@ select {
     });
 
     loadingScreen.addEventListener('click', () => {
-      if (!canEnter) return;
+      if (!canEnter) {
+        clearInterval(interval);
+        progress = 100;
+        progressBar.style.width = '100%';
+        clearTimeout(finishLoadingTimer);
+        showPhaseTwo();
+        return;
+      }
       unlockSite();
     });
 
